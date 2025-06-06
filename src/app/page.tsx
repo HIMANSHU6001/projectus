@@ -1,103 +1,123 @@
-import Image from "next/image";
+"use client";
+import React, {useState} from 'react';
+import UserInfoForm from '../components/UserInfoForm';
+import ProjectIdeasDisplay from '../components/ProjectIdeasDisplay';
+import UserInterest from '../components/UserInterest';
+import SubscriptionPage from '../components/SubscriptionPage';
+import Navigation from '../components/Navigation';
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+interface FormData {
+    professions: string[];
+    selectedProjects: string[];
+    noneSelected: boolean;
+    interest: 'buyer' | 'tech-enthusiast' | '';
+    name: string;
+    email: string;
+    whatsappIdeas: string;
+    newsletterEmail: string;
+    feedback: string;
 }
+
+const Index = () => {
+    const [currentPage, setCurrentPage] = useState(1);
+    const [formData, setFormData] = useState<FormData>({
+        professions: [],
+        selectedProjects: [],
+        noneSelected: false,
+        interest: '',
+        name: '',
+        email: '',
+        whatsappIdeas: '',
+        newsletterEmail: '',
+        feedback: ''
+    });
+
+    const updateFormData = (data: Partial<FormData>) => {
+        setFormData(prev => ({...prev, ...data}));
+    };
+
+    const nextPage = () => {
+        if (currentPage < 4) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const prevPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const renderCurrentPage = () => {
+        switch (currentPage) {
+            case 1:
+                return (
+                    <UserInfoForm
+                        formData={formData}
+                        updateFormData={updateFormData}
+                        onNext={nextPage}
+                    />
+                );
+            case 2:
+                return (
+                    <ProjectIdeasDisplay
+                        formData={formData}
+                        updateFormData={updateFormData}
+                        onNext={nextPage}
+                        onPrev={prevPage}
+                    />
+                );
+            case 3:
+                return (
+                    <UserInterest
+                        formData={formData}
+                        updateFormData={updateFormData}
+                        onNext={nextPage}
+                        onPrev={prevPage}
+                    />
+                );
+            case 4:
+                return (
+                    <SubscriptionPage
+                        formData={formData}
+                        updateFormData={updateFormData}
+                        onPrev={prevPage}
+                    />
+                );
+            default:
+                return null;
+        }
+    };
+
+    const steps = [
+        'Profession Selection',
+        'Project Ideas',
+        'Interest & Community',
+        'Contact & Subscription'
+    ];
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100">
+            <div className="container mx-auto px-4 py-8">
+                <div className="max-w-4xl mx-auto">
+                    <div className="text-center mb-8">
+                        <h1 className="text-4xl font-bold text-gray-800 mb-2">
+                            Embedded Systems & IoT Project Hub
+                        </h1>
+                        <p className="text-lg text-gray-600">
+                            Discover personalized project ideas for your profession
+                        </p>
+                    </div>
+
+                    <Navigation currentPage={currentPage} totalPages={4} steps={steps}/>
+
+                    <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                        {renderCurrentPage()}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Index;
